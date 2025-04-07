@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>CSI 2132 W-2025 Project</title>
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+    <body>
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar-->
+            <div class="border-end bg-white" id="sidebar-wrapper">
+                <div class="sidebar-heading border-bottom bg-light">e-Hotels</div>
+                <div class="list-group list-group-flush">
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('home') }}">Home</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('room_search') }}">Book a room</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('booking_to_rental') }}">Confirm a booking</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('direct_rental') }}">Direct rentals</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_one') }}">Rooms in your area</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_two') }}">Capacity of a hotel</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_room') }}">Manage room data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_hotel') }}">Manage hotel data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_customer') }}">Manage customer data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_employee') }}">Manage employee data</a>
+                </div>
+            </div>
+            <!-- Page content wrapper-->
+            <div id="page-content-wrapper">
+                <!-- Top navigation-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                    <div class="container-fluid">
+                        <a href="{{ url_for('manage_employee') }}" class="btn btn-primary">Refresh</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            
+                        </div>
+                    </div>
+                </nav>
+                <!-- Page content-->
+                <div class="container-fluid">
+                    <h2 class="text-center mb-4 mt-5">Add New Employee</h2>
+
+                    <!-- Flash messages -->
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} text-center">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+                    <!-- Add Employee Form -->
+                    <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <form method="POST">
+                        {{ form.hidden_tag() }}
+
+                        <div class="mb-3">
+                            {{ form.hotel_id.label(class="form-label") }}
+                            {{ form.hotel_id(class="form-select") }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            {{ form.sin_number.label(class="form-label") }}
+                            {{ form.sin_number(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.first_name.label(class="form-label") }}
+                            {{ form.first_name(class="form-control") }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.last_name.label(class="form-label") }}
+                            {{ form.last_name(class="form-control") }}
+                        </div>
+
+                        <label class="form-label">Roles</label>
+                        {% for role_form in form.roles %}
+                            {{ role_form.role(class="form-control mb-2") }}
+                        {% endfor %}
+
+                        {{ form.submit(class="btn btn-primary") }}
+                        </form>
+                    </div>
+                    </div>
+
+                    <h3 class="text-center mb-4 mt-5">All Employees</h3>
+
+                    <!-- Employee List -->
+                    <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        {% for emp in employees %}
+                        <form method="POST" class="mb-3 bg-white border rounded p-3 d-flex justify-content-between align-items-start">
+
+                            {% if edit_id == emp.employee_id|string %}
+                            <!-- Edit mode -->
+                            <div style="flex: 1;">
+                            <input type="number" name="hotel_id" class="form-control mb-1" value="{{ emp.hotel_id }}" required>
+                            <input type="text" name="sin_number" class="form-control mb-1" value="{{ emp.sin_number }}" required>
+                            <input type="text" name="first_name" class="form-control mb-1" value="{{ emp.first_name }}" required>
+                            <input type="text" name="last_name" class="form-control mb-1" value="{{ emp.last_name }}" required>
+
+                            <label class="form-label">Roles</label>
+                            {% for role in emp.roles %}
+                                <input type="text" name="role_{{ loop.index0 }}" class="form-control mb-1" value="{{ role }}">
+                            {% endfor %}
+                            {% for i in range(2) %}
+                                <input type="text" name="role_new_{{ i }}" class="form-control mb-1" placeholder="Add new role (optional)">
+                            {% endfor %}
+                            </div>
+                            <div class="d-flex flex-column ms-3">
+                            <input type="hidden" name="edit_id" value="{{ emp.employee_id }}">
+                            <div class="d-flex flex-column ms-3">
+                                <button type="submit" class="btn btn-success mb-2">Confirm</button>
+                                <a href="{{ url_for('manage_employee') }}" class="btn btn-secondary">Cancel</a>
+                            </div>
+                            </div>
+
+                            {% else %}
+                            <!-- View mode -->
+                            <div>
+                            <strong> {{ emp.first_name }} {{ emp.last_name }}</strong><br>
+                            ID: {{ emp.employee_id }}<br>
+                            Hotel ID: {{ emp.hotel_id }}<br>
+                            SIN: {{ emp.sin_number }}<br>
+                                {% if emp.roles %}
+                                {% for role in emp.roles %}
+                                    {{ role }}{% if not loop.last %}, {% endif %}
+                                {% endfor %}
+                                {% else %}
+                                <span class="text-muted">None</span><br>
+                                {% endif %}
+                            </div>
+                            <div class="d-flex flex-column ms-3">
+                                <a href="{{ url_for('manage_employee', edit_id=emp.employee_id) }}" class="btn btn-warning mb-2">Edit</a>
+                                <button name="delete_id" value="{{ emp.employee_id }}" class="btn btn-danger" onclick="return confirm('Delete this employee?');">✕</button>
+                            </div>
+                            {% endif %}
+
+                        </form>
+                        {% endfor %}
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    </body>
+</html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>CSI 2132 W-2025 Project</title>
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+    <body>
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar-->
+            <div class="border-end bg-white" id="sidebar-wrapper">
+                <div class="sidebar-heading border-bottom bg-light">e-Hotels</div>
+                <div class="list-group list-group-flush">
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('home') }}">Home</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('room_search') }}">Book a room</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('booking_to_rental') }}">Confirm a booking</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('direct_rental') }}">Direct rentals</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_one') }}">Rooms in your area</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_two') }}">Capacity of a hotel</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_room') }}">Manage room data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_hotel') }}">Manage hotel data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_customer') }}">Manage customer data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_employee') }}">Manage employee data</a>
+                </div>
+            </div>
+            <!-- Page content wrapper-->
+            <div id="page-content-wrapper">
+                <!-- Top navigation-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                    <div class="container-fluid">
+                        <a href="{{ url_for('booking_to_rental') }}" class="btn btn-primary">Refresh</a>
+                        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                            
+                        </div>
+                    </div>
+                </nav>
+                <!-- Page content-->
+                <div class="container-fluid">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="container mb-3">
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    {% endif %}
+                    {% endwith %}
+
+                    <h2 class="text-center mb-4 mt-5">Convert Booking to Rental</h2>
+
+                    <!-- Search Form -->
+                    <div class="row justify-content-center">
+                    <div class="col-md-8">
+                        <form method="POST" class="bg-white border rounded p-4 mb-4 shadow-sm">
+                        {{ form.hidden_tag() }}
+                        <div class="row mb-3">
+                            <div class="col">{{ form.first_name.label }} {{ form.first_name(class="form-control") }}</div>
+                            <div class="col">{{ form.last_name.label }} {{ form.last_name(class="form-control") }}</div>
+                        </div>
+                        <div class="mb-3">{{ form.address.label }} {{ form.address(class="form-control") }}</div>
+                        <div class="mb-3">{{ form.type_of_id.label }} {{ form.type_of_id(class="form-control") }}</div>
+                        <div class="mb-3">{{ form.employee_id.label }} {{ form.employee_id(class="form-control") }}</div>
+                        <div class="text-center">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                        </form>
+                    </div>
+                    </div>
+
+                    <!-- Booking Results -->
+                    {% if bookings %}
+                    <h4 class="text-center mt-5">Matching Bookings</h4>
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                        {% for b in bookings %}
+                            <form method="POST" class="bg-white border rounded p-3 mb-4 shadow-sm">
+                            <input type="hidden" name="booking_id" value="{{ b.booking_id }}">
+                            <input type="hidden" name="customer_id" value="{{ b.customer_id }}">
+                            <input type="hidden" name="employee_id" value="{{ form.employee_id.data }}">
+                            <input type="hidden" name="type_of_id" value="{{ form.type_of_id.data }}">
+
+                            <p><strong>Booking ID:</strong> {{ b.booking_id }}</p>
+                            <p><strong>Hotel Email:</strong> {{ b.hotel_email }}</p>
+                            <p><strong>Hotel Address:</strong> {{ b.address }}</p>
+                            <p><strong>Area:</strong> {{ b.area }}</p>
+                            <p><strong>Room:</strong> {{ b.room_id }}</p>
+                            <p><strong>From:</strong> {{ b.in_date }} to {{ b.out_date }}</p>
+                            <p><strong>Total Price:</strong> ${{ b.rental_price }}</p>
+
+                            <div class="mb-2">
+                                <label><strong>Enter Payment Amount:</strong></label>
+                                <input type="number" step="0.01" class="form-control" name="payment_amount" required>
+                            </div>
+
+                            <button type="submit" class="btn btn-success">Confirm Booking</button>
+                            </form>
+                        {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    </body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>CSI 2132 W-2025 Project</title>
+        <!-- Favicon-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+    <body>
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar-->
+            <div class="border-end bg-white" id="sidebar-wrapper">
+                <div class="sidebar-heading border-bottom bg-light">e-Hotels</div>
+                <div class="list-group list-group-flush">
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('home') }}">Home</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('room_search') }}">Book a room</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('booking_to_rental') }}">Confirm a booking</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('direct_rental') }}">Direct rentals</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_one') }}">Rooms in your area</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_two') }}">Capacity of a hotel</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_room') }}">Manage room data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_hotel') }}">Manage hotel data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_customer') }}">Manage customer data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_employee') }}">Manage employee data</a>
+                </div>
+            </div>
+            <!-- Page content wrapper-->
+            <div id="page-content-wrapper">
+                <!-- Top navigation-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                  <div class="container-fluid">
+                      <a href="{{ url_for('view_two') }}" class="btn btn-primary">Refresh</a>
+                      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                          
+                      </div>
+                  </div>
+              </nav>
+                <!-- Page content-->
+                <div class="container-fluid">
+                    <div class="row justify-content-center">
+                        <h2 class="text-center mb-4 mt-5">Check Total Room Capacity of a Hotel</h2>
+
+                        <!-- Form -->
+                        <div class="row justify-content-center">
+                          <div class="col-md-6">
+                            <form method="POST" class="bg-white border rounded p-4 shadow-sm">
+                              {{ form.hidden_tag() }}
+                              <div class="mb-3">
+                                {{ form.hotel_id.label(class="form-label") }}
+                                {{ form.hotel_id(class="form-select") }}
+                              </div>
+                              <div class="text-center">
+                                {{ form.submit(class="btn btn-primary") }}
+                              </div>
+                            </form>
+                          </div>
+                        </div>
+                      
+                        <!-- Result -->
+                        {% if total_capacity is not none %}
+                          <div class="row justify-content-center mt-4">
+                            <div class="col-md-6">
+                              <div class="alert alert-info text-center shadow-sm">
+                                <strong>Total Room Capacity:</strong> {{ total_capacity }}
+                              </div>
+                            </div>
+                          </div>
+                        {% endif %}
+                      
+                    </div>
+                  </div>
+            </div>
+        </div>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    </body>
+</html>

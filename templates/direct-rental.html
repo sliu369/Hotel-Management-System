@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>CSI 2132 W-2025 Project</title>
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    </head>
+    <body>
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar-->
+            <div class="border-end bg-white" id="sidebar-wrapper">
+                <div class="sidebar-heading border-bottom bg-light">Start Bootstrap</div>
+                <div class="list-group list-group-flush">
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('home') }}">Home</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('room_search') }}">Book a room</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('booking_to_rental') }}">Confirm a booking</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('direct_rental') }}">Direct rentals</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_one') }}">Rooms in your area</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('view_two') }}">Capacity of a hotel</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_room') }}">Manage room data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_hotel') }}">Manage hotel data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_customer') }}">Manage customer data</a>
+                    <a class="list-group-item list-group-item-action list-group-item-light p-3" href="{{ url_for('manage_employee') }}">Manage employee data</a>
+                </div>
+            </div>
+            <!-- Page content wrapper-->
+            <div id="page-content-wrapper">
+                <!-- Top navigation-->
+                <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+                  <div class="container-fluid">
+                      <a href="{{ url_for('direct_rental') }}" class="btn btn-primary">Refresh</a>
+                      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+                      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                          
+                      </div>
+                  </div>
+              </nav>
+                <!-- Page content-->
+                <div class="container-fluid">
+                    <h2 class="text-center mb-4 mt-5">Direct Rental</h2>
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="container mb-3">
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- Search Form -->
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <form method="POST" class="bg-white border rounded p-4 shadow-sm mb-4">
+        {{ form.hidden_tag() }}
+
+        <div class="row mb-3">
+          <div class="col">{{ form.first_name.label }} {{ form.first_name(class="form-control") }}</div>
+          <div class="col">{{ form.last_name.label }} {{ form.last_name(class="form-control") }}</div>
+        </div>
+
+        <div class="mb-3">{{ form.type_of_id.label }} {{ form.type_of_id(class="form-control") }}</div>
+        <div class="mb-3">{{ form.address.label }} {{ form.address(class="form-control") }}</div>
+
+        <div class="row mb-3">
+          <div class="col">{{ form.checkin.label }} {{ form.checkin(class="form-control") }}</div>
+          <div class="col">{{ form.checkout.label }} {{ form.checkout(class="form-control") }}</div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col">{{ form.min_price.label }} {{ form.min_price(class="form-control") }}</div>
+            <div class="col">{{ form.max_price.label }} {{ form.max_price(class="form-control") }}</div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col">{{ form.capacity.label }} {{ form.capacity(class="form-control") }}</div>
+          <div class="col">{{ form.employee_id.label }} {{ form.employee_id(class="form-control") }}</div>
+        </div>
+
+        <div class="text-center">
+          {{ form.submit(class="btn btn-primary") }}
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Room Results -->
+  {% if rooms %}
+    <h4 class="text-center mt-5">Available Rooms</h4>
+    <div class="row justify-content-center">
+      <div class="col-md-8">
+        {% for room in rooms %}
+          <form method="POST" class="bg-white border rounded p-3 mb-4 shadow-sm">
+            <input type="hidden" name="confirm_room_id" value="{{ room.room_id }}">
+            <input type="hidden" name="checkin" value="{{ form.checkin.data }}">
+            <input type="hidden" name="checkout" value="{{ form.checkout.data }}">
+            <input type="hidden" name="first_name" value="{{ form.first_name.data }}">
+            <input type="hidden" name="last_name" value="{{ form.last_name.data }}">
+            <input type="hidden" name="type_of_id" value="{{ form.type_of_id.data }}">
+            <input type="hidden" name="address" value="{{ form.address.data }}">
+            <input type="hidden" name="employee_id" value="{{ form.employee_id.data }}">
+            <input type="hidden" name="rental_price" value="{{ room.rental_price }}">
+
+            <h5>Room {{ room.room_number }} - ${{ room.rental_price }}</h5>
+            <p><strong>Hotel Area:</strong> {{ room.area }}</p>
+            <p><strong>Hotel Address:</strong> {{ room.hotel_address }}</p>
+            <p><strong>Capacity:</strong> {{ room.capacity }} | View: {{ room.view_type or 'None' }}</p>
+            <p><strong>Extendable:</strong> {{ 'Yes' if room.is_extendable else 'No' }}</p>
+
+            {% if room.amenities %}
+              <p><strong>Amenities:</strong> {{ room.amenities | join(', ') }}</p>
+            {% else %}
+              <p><strong>Amenities:</strong> None</p>
+            {% endif %}
+
+            {% if room.problems %}
+              <p class="text-danger"><strong>Problems:</strong> {{ room.problems | join(', ') }}</p>
+            {% else %}
+              <p><strong>Problems:</strong> None</p>
+            {% endif %}
+
+            <div class="mb-3">
+              <label><strong>Payment Amount ($):</strong></label>
+              <input type="number" step="0.01" name="payment_amount" class="form-control" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Confirm Rental</button>
+          </form>
+        {% endfor %}
+      </div>
+    </div>
+  {% elif form.is_submitted() %}
+    <p class="text-center text-muted">No available rooms matched your criteria.</p>
+  {% endif %}
+                </div>
+            </div>
+        </div>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+    </body>
+</html>
